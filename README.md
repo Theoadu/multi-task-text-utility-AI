@@ -249,6 +249,10 @@ assignment-1/
    uv run python -c "from src.run_query import run_query; print('Setup successful!')"
    ```
 
+## 🎬 Demo
+
+[![asciicast](https://asciinema.org/a/ufuc9ZaOgyUXEO6OyPGBxRYC4.svg)](https://asciinema.org/a/ufuc9ZaOgyUXEO6OyPGBxRYC4)
+
 ## 📖 Usage
 
 ### Command Line Interface
@@ -381,9 +385,10 @@ print(f"Average tokens: {df['total_tokens'].mean():.0f}")
 
 Create a `.env` file with:
 ```env
-OPENAI_API_KEY=sk-...                    # Required: 
+OPENAI_API_KEY=sk-...                     # Required:  Your API key
+OPENAI_BASE_URL=https://api.openai.com/v1
+MODEL_NAME=gpt-4o-mini # llama-3.3-70b    # Required: model name
 
-Your API key
 ```
 
 ### Customizing the Prompt
@@ -429,10 +434,6 @@ response = client.chat.completions.create(
 ```
 
 **Note**: Update cost estimation (line 39) when changing models.
-
-## 🎬 Demo
-
-[![asciicast](https://asciinema.org/a/ufuc9ZaOgyUXEO6OyPGBxRYC4.svg)](https://asciinema.org/a/ufuc9ZaOgyUXEO6OyPGBxRYC4)
 
 ## 📈 Performance Characteristics
 
