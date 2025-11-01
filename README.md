@@ -1,5 +1,7 @@
 # Multi-Task Text Utility
 
+![alt text](<Screenshot 2025-11-01 at 4.20.23 AM.png>)
+
 A Python-based conversational AI utility leveraging large language models to answer user questions while enforcing prompt safety and tracking comprehensive usage metrics.
 
 ## 📋 Table of Contents
