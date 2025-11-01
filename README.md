@@ -171,7 +171,7 @@ The application follows a simple pipeline architecture with three main stages:
 ## 📁 Project Structure
 
 ```
-assignment-1/
+.
 │
 ├── src/                          # Source code
 │   ├── __init__.py              # Package initializer
