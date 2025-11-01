@@ -2,18 +2,19 @@ import os, json, csv, time
 from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
+from rich import print
+import pandas as pd
+from rich.console import Console
+from rich.table import Table
 from src.safety import is_safe_prompt
 
 load_dotenv()
-client = OpenAI(
-    base_url="https://api.cerebras.ai/v1", api_key=os.getenv("CEREBRAS_API_KEY")
-)
+client = OpenAI()
 
 PROMPT_TEMPLATE = open("prompts/main_prompt.txt").read()
 
 
 def run_query(question: str):
-    print(is_safe_prompt(question))
     if not is_safe_prompt(question):
         result = {
             "answer": "Unsafe prompt detected.",
@@ -21,12 +22,11 @@ def run_query(question: str):
             "actions": [],
             "metrics": {},
         }
-        print(result)
         return result
 
     start = time.time()
     response = client.chat.completions.create(
-        model="llama-3.3-70b",
+        model=os.getenv("MODEL_NAME"),
         messages=[
             {"role": "user", "content": PROMPT_TEMPLATE + f"\nQuestion: {question}"}
         ],
@@ -37,10 +37,12 @@ def run_query(question: str):
     latency_ms = (end - start) * 1000
     estimated_cost_usd = tokens.total_tokens * 0.000005
 
+    output_llm = response.choices[0].message.content.strip()
+
+    parsed_response = json.loads(output_llm)
+
     result = {
-        "answer": response.choices[0].message.content.strip(),
-        "confidence": 0.9,
-        "actions": ["Review and respond"],
+        **parsed_response,
         "metrics": {
             "tokens": {
                 "prompt": tokens.prompt_tokens,
@@ -66,9 +68,28 @@ def run_query(question: str):
             ]
         )
 
-    print(json.dumps(result, indent=2))
     print(result)
+
+    display_csv_as_table("metrics/metrics.csv")
     return result
+
+
+def display_csv_as_table(csv_file_path: str):
+
+    console = Console()
+
+    metric_csv = pd.read_csv(csv_file_path)
+
+    table = Table(
+        title="Metrics Data from CSV", show_header=True, header_style="bold magenta"
+    )
+    for column in metric_csv.columns:
+        table.add_column(str(column), style="cyan")
+
+    for index, row in metric_csv.iterrows():
+        table.add_row(*[str(cell) for cell in row.values])
+
+    console.print(table)
 
 
 if __name__ == "__main__":
